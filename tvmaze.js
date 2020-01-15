@@ -21,25 +21,29 @@ async function searchShows(query) {
 	// hard coded data.
 
 	const showDataResponse = await axios.get("http://api.tvmaze.com/search/shows", { params: { q: query } });
-	const showID = showDataResponse.data[0].show.id;
-	const showName = showDataResponse.data[0].show.name;
-	const showSummary = showDataResponse.data[0].show.summary;
-	const showImage = showDataResponse.data[0].show.image.medium;
+	// console.log("Show Data Response type", Array.isArray(showDataResponse));
+	// console.log("Show Data Response",showDataResponse)
 
-	return [
-		{
-			id      : showID,
-			name    : showName,
-			summary : showSummary,
-			image   : showImage
-		}
-	];
+	let showArr = [];
+	for (let i of showDataResponse.data) {
+		let obj = {
+			id      : i.show.id,
+			name    : i.show.name,
+			summary : i.show.summary,
+			image   : i.show.image
+				? i.show.image.medium
+				: "https://store-images.s-microsoft.com/image/apps.65316.13510798887490672.6e1ebb25-96c8-4504-b714-1f7cbca3c5ad.f9514a23-1eb8-4916-a18e-99b1a9817d15?mode=scale&q=90&h=300&w=300"
+		};
+		showArr.push(obj);
+	}
+
+	return showArr;
 }
 
 /** Populate shows list:
  *     - given list of shows, add shows to DOM
  */
-
+// shows is an object being returned from searchShows()
 function populateShows(shows) {
 	const $showsList = $("#shows-list");
 	$showsList.empty();
@@ -51,7 +55,8 @@ function populateShows(shows) {
            <div class="card-body">
              <h5 class="card-title">${show.name}</h5>
              <p class="card-text">${show.summary}</p>
-           </div>
+             <img class="card-img-top" src="${show.image}">
+             </div>
          </div>
        </div>
       `
@@ -87,5 +92,6 @@ async function getEpisodes(id) {
 	// TODO: get episodes from tvmaze
 	//       you can get this by making GET request to
 	//       http://api.tvmaze.com/shows/SHOW-ID-HERE/episodes
-	// TODO: return array-of-episode-info, as described in docstring above
+  // TODO: return array-of-episode-info, as described in docstring above
+  
 }
