@@ -56,6 +56,8 @@ function populateShows(shows) {
              <h5 class="card-title">${show.name}</h5>
              <p class="card-text">${show.summary}</p>
              <img class="card-img-top" src="${show.image}">
+             
+            <button class="show-episodes-button">Episodes</button>
              </div>
          </div>
        </div>
@@ -92,6 +94,33 @@ async function getEpisodes(id) {
 	// TODO: get episodes from tvmaze
 	//       you can get this by making GET request to
 	//       http://api.tvmaze.com/shows/SHOW-ID-HERE/episodes
-  // TODO: return array-of-episode-info, as described in docstring above
-  
+	// TODO: return array-of-episode-info, as described in docstring above
+	const showsResponse = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
+	console.log("shows response: ", showsResponse);
+	let episodes = [];
+	for (let episode of showsResponse.data) {
+		let obj = {};
+		//TODO: REFACTOR WITH DESTRUCTURING LATER
+		obj.name = episode.name;
+		obj.id = episode.id;
+		obj.season = episode.season;
+		obj.number = episode.number;
+		episodes.push(obj);
+	}
+	console.log("episodes", episodes);
+	return episodes;
+}
+
+$("#shows-list").on("click", ".show-episodes-button", async function getShowID(e) {
+  let showID = +$(e.target).parent().parent().parent().attr("data-show-id");
+  let showsList = await getEpisodes(showID);
+  populateEpisodes(showsList);
+});
+
+function populateEpisodes(showsList) {
+  for(let show of showsList){
+    let $listItem = `<li>${show.name} (season ${show.season}, number ${show.number})</li>`;
+    $("#episodes-list").append($listItem);
+  }
+	$("#episodes-area").show();
 }
