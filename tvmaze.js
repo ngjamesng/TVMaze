@@ -26,12 +26,13 @@ async function searchShows(query) {
 
 	let showArr = [];
 	for (let i of showDataResponse.data) {
+		let { id, name, summary, image } = i.show;
 		let obj = {
-			id      : i.show.id,
-			name    : i.show.name,
-			summary : i.show.summary,
-			image   : i.show.image
-				? i.show.image.medium
+			id,
+			name,
+			summary,
+			image   : image
+				? image.medium
 				: "https://store-images.s-microsoft.com/image/apps.65316.13510798887490672.6e1ebb25-96c8-4504-b714-1f7cbca3c5ad.f9514a23-1eb8-4916-a18e-99b1a9817d15?mode=scale&q=90&h=300&w=300"
 		};
 		showArr.push(obj);
@@ -99,12 +100,8 @@ async function getEpisodes(id) {
 	console.log("shows response: ", showsResponse);
 	let episodes = [];
 	for (let episode of showsResponse.data) {
-		let obj = {};
-		//TODO: REFACTOR WITH DESTRUCTURING LATER
-		obj.name = episode.name;
-		obj.id = episode.id;
-		obj.season = episode.season;
-		obj.number = episode.number;
+		let { name, id, season, number } = episode;
+		let obj = { name, id, season, number };
 		episodes.push(obj);
 	}
 	console.log("episodes", episodes);
@@ -112,15 +109,15 @@ async function getEpisodes(id) {
 }
 
 $("#shows-list").on("click", ".show-episodes-button", async function getShowID(e) {
-  let showID = +$(e.target).parent().parent().parent().attr("data-show-id");
-  let showsList = await getEpisodes(showID);
-  populateEpisodes(showsList);
+	let showID = +$(e.target).parent().parent().parent().attr("data-show-id");
+	let showsList = await getEpisodes(showID);
+	populateEpisodes(showsList);
 });
 
 function populateEpisodes(showsList) {
-  for(let show of showsList){
-    let {name, season, number} = show;
-    $("#episodes-list").append(`<li>${name} (season ${season}, number ${number})</li>`);
-  }
+	for (let show of showsList) {
+		let { name, season, number } = show;
+		$("#episodes-list").append(`<li>${name} (season ${season}, number ${number})</li>`);
+	}
 	$("#episodes-area").show();
 }
