@@ -119,8 +119,8 @@ $("#shows-list").on("click", ".show-episodes-button", async function getShowID(e
 
 function populateEpisodes(showsList) {
   for(let show of showsList){
-    let $listItem = `<li>${show.name} (season ${show.season}, number ${show.number})</li>`;
-    $("#episodes-list").append($listItem);
+    let {name, season, number} = show;
+    $("#episodes-list").append(`<li>${name} (season ${season}, number ${number})</li>`);
   }
 	$("#episodes-area").show();
 }
